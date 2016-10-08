@@ -1,10 +1,10 @@
-import PicoBorgRev
+#!/usr/bin/env python
+from spare_parts import PicoBorgRev
 import socket
 import struct
 import rospy
 
 from geometry_msgs.msg import Twist
-
 
 class RosBorg():
 
@@ -34,3 +34,6 @@ class RosBorg():
 def main():
 	rosBorg = RosBorg()
 	rospy.spin()
+
+if __name__ == "__main__":
+	main()

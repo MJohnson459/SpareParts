@@ -129,16 +129,16 @@ include_directories(
 # add_dependencies(SpareParts ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(odometry src/odometry.cpp)
+# add_executable(odometry src/odometry.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(SpareParts_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(odometry
-  ${catkin_LIBRARIES}
-)
+# target_link_libraries(odometry
+#   ${catkin_LIBRARIES}
+# )
 
 #############
 ## Install ##
@@ -148,7 +148,7 @@ target_link_libraries(odometry
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 catkin_install_python(PROGRAMS
-  scripts/spare_parts.py
+  scripts/spare_parts
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -160,11 +160,11 @@ catkin_install_python(PROGRAMS
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS odometry
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+# install(TARGETS odometry
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
