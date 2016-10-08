@@ -1,3 +1,3 @@
 <launch>
-  <node pkg="spare_parts" type="rosBorg.py" name="controller"/>
+  <node pkg="spare_parts" type="spare_parts.py" name="controller"/>
 </launch>
