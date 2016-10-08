@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-
-from PicoBorgRev import PicoBorgRev
+import PicoBorgRev
 import socket
 import struct
 import rospy
@@ -36,6 +34,3 @@ class RosBorg():
 def main():
 	rosBorg = RosBorg()
 	rospy.spin()
-
-if __name__ == "__main__":
-	main()
