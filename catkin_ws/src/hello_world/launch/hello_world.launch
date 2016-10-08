@@ -1,0 +1,3 @@
+<launch>
+  <node name="hello" pkg="hello_world" type="hello_world_node" />
+</launch>
