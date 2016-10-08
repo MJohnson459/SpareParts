@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import PicoBorgRev
+from PicoBorgRev import PicoBorgRev
 import socket
 import struct
 import rospy
