@@ -1,12 +1,12 @@
-FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie
+FROM resin/%%RESIN_MACHINE_NAME%%-debian
 
 #switch on systemd init system in container
 ENV INITSYSTEM on
 
 # Install ROS
-ENV LANG en_US.UTF-8
+ENV LANG en_US.UTF-8 \
 	ROS_DISTRO="kinetic" \
-	ROS_CONFIG="ros_robot"
+	ROS_CONFIG="ros_robot" \
 	CATKIN_WS="/usr/catkin_ws" \
 	ROS_INSTALL_DIR="/opt/ros/$ROS_DISTRO"
 
