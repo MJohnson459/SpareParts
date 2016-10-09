@@ -4,7 +4,6 @@ FROM resin/%%RESIN_MACHINE_NAME%%-debian:jessie
 ENV INITSYSTEM on
 
 # Install ROS
-RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 0xB01FA116
