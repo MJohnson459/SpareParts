@@ -6,7 +6,7 @@ ENV INITSYSTEM on
 # Install ROS
 ENV LANG="en_US.UTF-8" \
 	ROS_DISTRO="kinetic" \
-	ROS_CONFIG="ros_robot" \
+	ROS_CONFIG="ros_base" \
 	CATKIN_WS="/usr/catkin_ws" \
 	ROS_INSTALL_DIR="/opt/ros/$ROS_DISTRO"
 
