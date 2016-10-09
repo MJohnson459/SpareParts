@@ -10,36 +10,37 @@ ENV LANG en_US.UTF-8 \
 	CATKIN_WS="/usr/catkin_ws" \
 	ROS_INSTALL_DIR="/opt/ros/$ROS_DISTRO"
 
-# install bootstrap tools
-RUN pip install --upgrade setuptools \
-	&& pip install -U rosdep rosinstall_generator wstool rosinstall
-
-# bootstrap rosdep
-RUN rosdep init && rosdep update
-
-RUN mkdir $CATKIN_WS && cd $CATKIN_WS \
-	&& rosinstall_generator $ROS_CONFIG --rosdistro $ROS_DISTRO --deps --wet-only --tar > .rosinstall \
-	&& wstool init -j8 src .rosinstall \
-	&& rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y \
-		--skip-keys python-rosdep \
-		--skip-keys python-rospkg \
-		--skip-keys python-catkin-pkg \
-	&& ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic \
-	&& rm -rf $CATKIN_WS \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/*
-
-
-
-
-# setup entrypoint
-COPY ./docker_entrypoint.sh /
-
-ENTRYPOINT ["/docker_entrypoint.sh"]
-
-
-COPY ./catkin_ws /catkin_ws
-WORKDIR /catkin_ws
-
-RUN /docker_entrypoint.sh catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/kinetic/
-
-CMD ["roslaunch", "spare_parts", "spare_parts.launch"]
+# # install bootstrap tools
+# RUN pip install --upgrade setuptools \
+# 	&& pip install -U rosdep rosinstall_generator wstool rosinstall
+#
+# # bootstrap rosdep
+# RUN rosdep init && rosdep update
+#
+# RUN mkdir $CATKIN_WS && cd $CATKIN_WS \
+# 	&& rosinstall_generator $ROS_CONFIG --rosdistro $ROS_DISTRO --deps --wet-only --tar > .rosinstall \
+# 	&& wstool init -j8 src .rosinstall \
+# 	&& rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y \
+# 		--skip-keys python-rosdep \
+# 		--skip-keys python-rospkg \
+# 		--skip-keys python-catkin-pkg \
+# 	&& ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic \
+# 	&& rm -rf $CATKIN_WS \
+# 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+#
+#
+#
+#
+# # setup entrypoint
+# COPY ./docker_entrypoint.sh /
+#
+# ENTRYPOINT ["/docker_entrypoint.sh"]
+#
+#
+# COPY ./catkin_ws /catkin_ws
+# WORKDIR /catkin_ws
+#
+# RUN /docker_entrypoint.sh catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/kinetic/
+#
+# CMD ["roslaunch", "spare_parts", "spare_parts.launch"]
+CMD echo "hello world"
