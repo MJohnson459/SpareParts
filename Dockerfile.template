@@ -4,7 +4,7 @@ FROM resin/%%RESIN_MACHINE_NAME%%-python
 ENV INITSYSTEM on
 
 # Install ROS
-ENV LANG en_US.UTF-8 \
+ENV LANG="en_US.UTF-8" \
 	ROS_DISTRO="kinetic" \
 	ROS_CONFIG="ros_robot" \
 	CATKIN_WS="/usr/catkin_ws" \
