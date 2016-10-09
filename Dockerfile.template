@@ -13,7 +13,7 @@ ENV LANG en_US.UTF-8 \
 # # install bootstrap tools
 RUN pip install -U rosdep rosinstall_generator wstool rosinstall || true
 
-RUN mkdir $CATKIN_WS && cd $CATKIN_WS \
+RUN mkdir -p "$CATKIN_WS" && cd "$CATKIN_WS" \
 	&& rosdep init && rosdep update
 	&& rosinstall_generator $ROS_CONFIG --rosdistro $ROS_DISTRO --deps --wet-only --tar > .rosinstall \
 	&& wstool init -j8 src .rosinstall \
@@ -22,7 +22,7 @@ RUN mkdir $CATKIN_WS && cd $CATKIN_WS \
 		--skip-keys python-rospkg \
 		--skip-keys python-catkin-pkg \
 	&& ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/kinetic \
-	&& rm -rf $CATKIN_WS \
+	&& rm -rf "$CATKIN_WS" \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
