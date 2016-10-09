@@ -14,7 +14,7 @@ ENV LANG="en_US.UTF-8" \
 RUN pip install -U rosdep rosinstall_generator wstool rosinstall || true
 
 RUN mkdir -p "$CATKIN_WS" && cd "$CATKIN_WS" \
-	&& rosdep init && rosdep update
+	&& rosdep init && rosdep update \
 	&& rosinstall_generator $ROS_CONFIG --rosdistro $ROS_DISTRO --deps --wet-only --tar > .rosinstall \
 	&& wstool init -j8 src .rosinstall \
 	&& rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y \
