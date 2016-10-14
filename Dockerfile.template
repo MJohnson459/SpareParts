@@ -7,6 +7,18 @@ ENV INITSYSTEM=on
 RUN apt-get -q update && apt-get install -yq --no-install-recommends \
 	# build-essential \
 	apt-utils \
+	kmod \
+	# module-init-tools \
+	# net-tools \
+	# ifupdown \
+	# iputils-ping \
+	i2c-tools \
+	# usbutils \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get -q update && apt-get install -yq --no-install-recommends \
+	# build-essential \
+	apt-utils \
 	python-smbus \
 	kmod \
 	# module-init-tools \
@@ -23,5 +35,5 @@ WORKDIR /catkin_ws
 #RUN /ros_entrypoint.sh catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/kinetic/
 
 #CMD ["roslaunch", "spare_parts", "spare_parts.launch"]
-CMD  modprobe i2c-dev && python test.py
-#CMD  bash
+# CMD  modprobe i2c-dev && python test.py
+CMD bash -c "while true; do sleep 1; done"
