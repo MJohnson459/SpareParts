@@ -4,7 +4,7 @@ LABEL io.resin.device-type="raspberrypi2"
 #switch on systemd init system in container
 ENV INITSYSTEM=on
 
-RUN apt-get -q update && apt-get install -yq --no-install-recommends \
+RUN apt-get -q update && apt-get install -y \
 	# build-essential \
 	apt-utils \
 	kmod \
@@ -16,11 +16,9 @@ RUN apt-get -q update && apt-get install -yq --no-install-recommends \
 	# usbutils \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get -q update && apt-get install -yq --no-install-recommends \
+RUN apt-get -q update && apt-get install -y \
 	# build-essential \
-	apt-utils \
 	python-smbus \
-	kmod \
 	# module-init-tools \
 	# net-tools \
 	# ifupdown \
@@ -36,4 +34,4 @@ WORKDIR /catkin_ws
 
 #CMD ["roslaunch", "spare_parts", "spare_parts.launch"]
 # CMD  modprobe i2c-dev && python test.py
-CMD bash -c "while true; do sleep 1; done"
+CMD python loop.py
