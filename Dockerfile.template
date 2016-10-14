@@ -22,5 +22,5 @@ WORKDIR /catkin_ws
 #RUN /ros_entrypoint.sh catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/kinetic/
 
 #CMD ["roslaunch", "spare_parts", "spare_parts.launch"]
-#CMD  modprobe i2c-dev && python test.py
-CMD  bash
+CMD  modprobe i2c-dev && python test.py
+#CMD  bash
