@@ -30,7 +30,9 @@ RUN apt-get -q update && apt-get install -y \
 COPY ./catkin_ws /catkin_ws
 WORKDIR /catkin_ws
 
-RUN pacman -Sy --noconfirm python2 python2-flask dropbear
+RUN apt-get -q update && apt-get install -y \
+	dropbear \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN dropbearkey -t dss -f etc/dropbear/dropbear_dss_host_key
 RUN dropbearkey -t rsa -f /etc/dropbear/dropbear_rsa_host_key
