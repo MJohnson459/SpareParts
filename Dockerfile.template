@@ -8,6 +8,7 @@ RUN apt-get -q update && apt-get install -yq --no-install-recommends \
 	# build-essential \
 	apt-utils \
 	python-smbus \
+	kmod \
 	# module-init-tools \
 	# net-tools \
 	# ifupdown \
