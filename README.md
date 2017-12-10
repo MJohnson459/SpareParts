@@ -1,10 +1,10 @@
 # SpareParts
 
 This repository contains the source code for a custom robot
-built with a Raspberry Pi 2 (with camera) and a PiBorg Reverse motor
+built with a Raspberry Pi 3 (with camera) and a PiBorg Reverse motor
 controller.
 
-The intention is to integrate this robot with ROS and use monocular 
+The intention is to integrate this robot with ROS2 and use monocular 
 visual odometry to to estimate the position (probably in conjunction
 with the ros [robot_localization] package.
 

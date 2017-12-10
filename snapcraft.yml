@@ -1,0 +1,22 @@
+name: mjohnson459-spare-parts
+version: 0.1
+summary: ROS2 Talker/Listener Example
+description: |
+  This example consists of the ROS2 underlay as well as an example talker and
+  listener.
+
+grade: devel
+confinement: devmode
+
+parts:
+  examples:
+    source: src
+    plugin: ament
+    version: release-beta3
+
+apps:
+  talker:
+    command: ros2 run demo_nodes_cpp talker
+
+  listener:
+    command: ros2 run demo_nodes_cpp listener
