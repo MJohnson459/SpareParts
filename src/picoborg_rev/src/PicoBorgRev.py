@@ -461,7 +461,7 @@ Sets the current state of the LED, False for off, True for on
 state = GetLed()
 
 Reads the current state of the LED, False for off, True for on
-        """ 
+        """
         try:
             i2cRecv = self.bus.read_i2c_block_data(self.i2cAddress, COMMAND_GET_LED, I2C_MAX_LEN)
         except KeyboardInterrupt:
@@ -498,7 +498,7 @@ Reads the system EPO latch state.
 If False the EPO has not been tripped, and movement is allowed.
 If True the EPO has been tripped, movement is disabled if the EPO is not ignored (see SetEpoIgnore)
     Movement can be re-enabled by calling ResetEpo.
-        """ 
+        """
         try:
             i2cRecv = self.bus.read_i2c_block_data(self.i2cAddress, COMMAND_GET_EPO, I2C_MAX_LEN)
         except KeyboardInterrupt:
@@ -537,7 +537,7 @@ Sets the system to ignore or use the EPO latch, set to False if you have an EPO 
 state = GetEpoIgnore()
 
 Reads the system EPO ignore state, False for using the EPO latch, True for ignoring the EPO latch
-        """ 
+        """
         try:
             i2cRecv = self.bus.read_i2c_block_data(self.i2cAddress, COMMAND_GET_EPO_IGNORE, I2C_MAX_LEN)
         except KeyboardInterrupt:
@@ -580,7 +580,7 @@ state = GetCommsFailsafe()
 
 Read the current system state of the communications failsafe, True for enabled, False for disabled
 The failsafe will turn the motors off unless it is commanded at least once every 1/4 of a second
-        """ 
+        """
         try:
             i2cRecv = self.bus.read_i2c_block_data(self.i2cAddress, COMMAND_GET_FAILSAFE, I2C_MAX_LEN)
         except KeyboardInterrupt:
@@ -614,7 +614,7 @@ The easiest way to check is to put both motors at a low power setting which is h
 Note that the fault state may be true at power up, this is normal and should clear when both motors have been driven
 If there are no faults but you cannot make your motors move check GetEpo to see if the safety switch has been tripped
 For more details check the website at www.piborg.org/picoborgrev and double check the wiring instructions
-        """ 
+        """
         try:
             i2cRecv = self.bus.read_i2c_block_data(self.i2cAddress, COMMAND_GET_DRIVE_FAULT, I2C_MAX_LEN)
         except KeyboardInterrupt:
@@ -657,7 +657,7 @@ The encoder based move mode is disabled at power on
 state = GetEncoderMoveMode()
 
 Read the current system state of the encoder based move mode, True for enabled (encoder moves), False for disabled (power level moves)
-        """ 
+        """
         try:
             i2cRecv = self.bus.read_i2c_block_data(self.i2cAddress, COMMAND_GET_ENC_MODE, I2C_MAX_LEN)
         except KeyboardInterrupt:
@@ -780,7 +780,7 @@ EncoderMoveMotors(5)     -> all motors moving forward for 5 counts
 state = IsEncoderMoving()
 
 Reads the current state of the encoder motion, False for all motors have finished, True for any motor is still moving
-        """ 
+        """
         try:
             i2cRecv = self.bus.read_i2c_block_data(self.i2cAddress, COMMAND_GET_ENC_MOVING, I2C_MAX_LEN)
         except KeyboardInterrupt:
