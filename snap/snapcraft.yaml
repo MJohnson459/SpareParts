@@ -6,6 +6,13 @@ description: |
 
 grade: devel
 confinement: devmode
+architectures: [armhf]
+
+apps:
+  marvin:
+    command: marvin
+    daemon: simple
+    plugs: [network-bind]
 
 parts:
   marvin:
