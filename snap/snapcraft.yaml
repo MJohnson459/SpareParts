@@ -12,7 +12,7 @@ apps:
   marvin:
     command: marvin
     daemon: simple
-    plugs: [network-bind]
+    plugs: [network-bind, i2c]
 
 parts:
   marvin:

@@ -1,6 +1,8 @@
+extern crate picoborg_rev;
 extern crate tiny_http;
 
 use tiny_http::{Server, Response};
+use picoborg_rev::toggle_led;
 
 fn main() {
     println!("Hello, world!");
@@ -13,6 +15,8 @@ fn main() {
             request.url(),
             request.headers()
         );
+
+        toggle_led();
 
         let response = Response::from_string("hello world");
         request.respond(response);
