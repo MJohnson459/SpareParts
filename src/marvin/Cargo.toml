@@ -5,6 +5,4 @@ authors = ["Michael Johnson <mjohnson459@gmail.com>"]
 
 [dependencies]
 tiny_http = "0.6"
-
-[dependencies.picoborg_rev]
-path = "../picoborg_rev"
+i2cdev = "0.4"

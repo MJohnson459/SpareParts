@@ -1,7 +1,0 @@
-[package]
-name = "picoborg_rev"
-version = "0.1.0"
-authors = ["Michael Johnson <mjohnson459@gmail.com>"]
-
-[dependencies]
-i2cdev = "0.4"

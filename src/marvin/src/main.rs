@@ -1,5 +1,7 @@
-extern crate picoborg_rev;
 extern crate tiny_http;
+extern crate i2cdev;
+
+mod picoborg_rev;
 
 use tiny_http::{Server, Response};
 use picoborg_rev::toggle_led;

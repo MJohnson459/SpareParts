@@ -1,5 +1,3 @@
-extern crate i2cdev;
-
 use std::thread;
 use std::time::Duration;
 
