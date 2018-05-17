@@ -1,20 +1,18 @@
-FROM osrf/ros:kinetic-robot
+FROM ubuntu
 
-RUN apt-get -q update && apt-get install -y \
-	# build-essential \
-	apt-utils \
-	kmod \
-	# module-init-tools \
-	# net-tools \
-	# ifupdown \
-	# iputils-ping \
-	i2c-tools \
-	# usbutils \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get -q update
+RUN apt-get install -y \
+  snapd \
+  snapcraft \
+  build-essential \
+  curl \
+  git
 
-COPY ./catkin_ws /catkin_ws
-WORKDIR /catkin_ws
+# RUN snap install lxd && lxd init
+# RUN usermod -a -G lxd $USER && newgrp lxd
+# RUN snap install --classic snapcraft
 
-RUN /ros_entrypoint.sh catkin_make install -DCMAKE_INSTALL_PREFIX=/opt/ros/kinetic/
+COPY . /host
+WORKDIR /host
 
-CMD ["roslaunch", "spare_parts", "spare_parts.launch"]
+RUN snapcraft build

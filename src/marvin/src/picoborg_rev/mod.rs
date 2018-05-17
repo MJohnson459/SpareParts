@@ -50,14 +50,13 @@ const I2C_ID: u8 = 0x15;
 pub fn toggle_led() -> Result<(), LinuxI2CError> {
     let mut dev = try!(LinuxI2CDevice::new("/dev/i2c-1", I2C_ADDRESS));
 
-    const COMMAND_SET_LED: u8 = 0x01;
     thread::sleep(Duration::from_millis(100));
 
     let mut is_on = false;
 
     loop {
         is_on = !is_on;
-        let mut buf: [u8; 6] = [0; 6];
+        println!("Toggling led: {}", is_on);
         try!(dev.smbus_write_byte_data(0x01, if is_on {0x01} else {0x00})); // On
         thread::sleep(Duration::from_millis(10));
     }
