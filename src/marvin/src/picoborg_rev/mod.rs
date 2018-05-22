@@ -52,14 +52,13 @@ pub fn toggle_led() -> Result<(), LinuxI2CError> {
 
     thread::sleep(Duration::from_millis(100));
 
-    let mut is_on = false;
+    println!("Toggling led on");
+    try!(dev.smbus_write_byte_data(0x01, 0x01));
+    thread::sleep(Duration::from_secs(10));
+    println!("Toggling led off");
+    try!(dev.smbus_write_byte_data(0x01, 0x00)); // On
 
-    loop {
-        is_on = !is_on;
-        println!("Toggling led: {}", is_on);
-        try!(dev.smbus_write_byte_data(0x01, if is_on {0x01} else {0x00})); // On
-        thread::sleep(Duration::from_millis(10));
-    }
+    Ok(())
 }
 
 #[cfg(test)]
