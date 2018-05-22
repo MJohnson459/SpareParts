@@ -26,10 +26,12 @@ fn main() {
             request.headers()
         );
 
-        let response = match borg.toggle_led() {
-            Ok(_) => Response::from_string("hello world"),
-            Err(what) => Response::from_string(what.description()),
-        };
-        request.respond(response);
+        if request.url() == "/toggle_led" {
+            let response = match borg.toggle_led() {
+                Ok(led_on) => Response::from_string(format!("hello world: {}", led_on)),
+                Err(what) => Response::from_string(what.description()),
+            };
+            request.respond(response);
+        }
     }
 }
