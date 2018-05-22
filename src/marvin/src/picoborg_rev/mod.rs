@@ -79,7 +79,7 @@ impl PicoBorgRev {
     pub fn toggle_led(&mut self) -> Result<bool, LinuxI2CError> {
         self.led_on = !self.led_on;
         println!("Toggling led {}", self.led_on);
-        try!(self.device.smbus_write_byte_data(0x01, 0x01));
+        try!(self.device.smbus_write_byte_data(0x01, if self.led_on {0x01} else {0x00}));
 
         Ok(self.led_on)
     }
