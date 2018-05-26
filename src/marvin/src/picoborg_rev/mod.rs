@@ -7,6 +7,8 @@ use i2cdev::core::*;
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use i2cdev::linux::{LinuxI2CDevice, LinuxI2CError};
 
+use robot_traits::Robot;
+
 const I2C_ADDRESS: u16 = 0x44;
 
 // Constant values
@@ -53,25 +55,6 @@ const COMMAND_VALUE_REV: u8       = 2;     // I2C value representing reverse
 const COMMAND_VALUE_ON: u8        = 1;     // I2C value representing on
 const COMMAND_VALUE_OFF: u8       = 0;     // I2C value representing off
 
-/// https://gpiozero.readthedocs.io/en/stable/api_output.html#motor
-trait Motor {
-    /// Drive the motor backwards.
-    ///
-    /// speed (float) – The speed at which the motor should turn. Can be any value between 0 (stopped) and the default 1 (maximum speed) if pwm was True when the class was constructed (and only 0 or 1 if not).
-    fn backward(speed: f32);
-
-    /// Drive the motor forwards.
-    ///
-    /// speed (float) – The speed at which the motor should turn. Can be any value between 0 (stopped) and the default 1 (maximum speed) if pwm was True when the class was constructed (and only 0 or 1 if not).
-    fn forward(speed: f32);
-
-    /// Reverse the current direction of the motor. If the motor is currently idle this does nothing. Otherwise, the motor’s direction will be reversed at the current speed.
-    fn reverse();
-
-    /// Stop the motor.
-    fn stop();
-}
-
 pub struct PicoBorgRev {
     device: LinuxI2CDevice,
     led_on: bool,
@@ -105,7 +88,7 @@ impl PicoBorgRev {
 
     /// Set motor 1 power.
     /// Range power [-1.0, 1.0]
-    pub fn set_motor1(&mut self, power: f32) -> Result<f32, LinuxI2CError> {
+    pub fn set_motor_1(&mut self, power: f32) -> Result<f32, LinuxI2CError> {
 
         let command: u8;
         let mut pwm: u8;
@@ -125,34 +108,125 @@ impl PicoBorgRev {
         Ok(power)
     }
 
+    /// Set motor 2 power.
+    /// Range power [-1.0, 1.0]
+    pub fn set_motor_2(&mut self, power: f32) -> Result<f32, LinuxI2CError> {
 
-    pub fn get_epo(self) -> Result<bool, LinuxI2CError> {
+        let command: u8;
+        let mut pwm: u8;
+        if power < 0.0 {
+            command = COMMAND_SET_B_REV;
+            pwm = (PWM_MAX as f32 * -power) as u8;
+        } else {
+            command = COMMAND_SET_B_FWD;
+            pwm = (PWM_MAX as f32 * power) as u8;
+        }
+
+        if pwm > PWM_MAX { pwm = PWM_MAX; }
+
+        try!(self.device.smbus_write_byte_data(command, pwm));
+
+        println!("Setting motor 1 power: {}  pwm: {}", power, pwm);
+        Ok(power)
+    }
+
+    /// Sets the drive level for all motors, from +1 to -1.
+    pub fn set_motors(&mut self, power: f32) -> Result<f32, LinuxI2CError> {
+
+        let command: u8;
+        let mut pwm: u8;
+        if power < 0.0 {
+            command = COMMAND_SET_ALL_REV;
+            pwm = (PWM_MAX as f32 * -power) as u8;
+        } else {
+            command = COMMAND_SET_ALL_FWD;
+            pwm = (PWM_MAX as f32 * power) as u8;
+        }
+
+        if pwm > PWM_MAX { pwm = PWM_MAX; }
+
+        try!(self.device.smbus_write_byte_data(command, pwm));
+
+        println!("Setting motor 1 power: {}  pwm: {}", power, pwm);
+        Ok(power)
+    }
+
+    /// Sets all motors to stopped, useful when ending a program
+    pub fn motors_off(&mut self) -> Result<(), LinuxI2CError> {
+        try!(self.device.smbus_write_byte_data(COMMAND_ALL_OFF, 0));
+        Ok(())
+    }
+
+    /// Gets the drive level for motor 1, from +1 to -1.
+    pub fn get_motor_1(&mut self) -> Result<f32, LinuxI2CError> {
+        let data = self.device.smbus_read_block_data(COMMAND_GET_A)?;
+        let power = data[2] as f32 / PWM_MAX as f32;
+        match data[1] {
+            COMMAND_VALUE_FWD => Ok(power),
+            COMMAND_VALUE_REV => Ok(-power),
+            _ => Ok(0.0),
+        }
+    }
+
+    /// Gets the drive level for motor 1, from +1 to -1.
+    pub fn get_motor_2(&mut self) -> Result<f32, LinuxI2CError> {
+        let data = self.device.smbus_read_block_data(COMMAND_GET_B)?;
+        let power = data[2] as f32 / PWM_MAX as f32;
+        match data[1] {
+            COMMAND_VALUE_FWD => Ok(power),
+            COMMAND_VALUE_REV => Ok(-power),
+            _ => Ok(0.0),
+        }
+    }
+
+    /// Resets the EPO latch state, use to allow movement again after the EPO has been tripped
+    pub fn reset_epo(&mut self) -> Result<(), LinuxI2CError> {
+        try!(self.device.smbus_write_byte_data(COMMAND_RESET_EPO, 0));
+
+        Ok(())
+    }
+
+    /// state = GetEpo()
+    ///
+    /// Reads the system EPO latch state.
+    /// If False the EPO has not been tripped, and movement is allowed.
+    /// If True the EPO has been tripped, movement is disabled if the EPO is not ignored (see SetEpoIgnore)
+    ///     Movement can be re-enabled by calling ResetEpo.
+    pub fn get_epo(&mut self) -> Result<bool, LinuxI2CError> {
         let data = self.device.smbus_read_word_data(COMMAND_GET_EPO)?;
-        Ok(data[1] == COMMAND_VALUE_ON)
+        let status = (data >> 8) as u8;
+
+        Ok(status == COMMAND_VALUE_ON)
     }
 }
-
 
 impl Drop for PicoBorgRev {
     fn drop(&mut self) {
-        let _ = self.device.smbus_write_byte_data(COMMAND_ALL_OFF, 0);
+        let _ = self.motors_off();
     }
 }
 
+impl Robot for PicoBorgRev {
+    fn backward(&mut self, speed: f32) {
+        let _ = self.set_motors(-speed);
+    }
 
-// real code should probably not use unwrap()
-pub fn toggle_led() -> Result<(), LinuxI2CError> {
-    let mut dev = try!(LinuxI2CDevice::new("/dev/i2c-1", I2C_ADDRESS));
+    fn forward(&mut self, speed: f32) {
+        let _ = self.set_motors(speed);
+    }
 
-    thread::sleep(Duration::from_millis(100));
+    fn left(&mut self, speed: f32) {
+        let _ = self.set_motor_1(speed);
+        let _ = self.set_motor_2(-speed);
+    }
 
-    println!("Toggling led on");
-    try!(dev.smbus_write_byte_data(0x01, 0x01));
-    thread::sleep(Duration::from_secs(10));
-    println!("Toggling led off");
-    try!(dev.smbus_write_byte_data(0x01, 0x00)); // On
+    fn right(&mut self, speed: f32) {
+        let _ = self.set_motor_1(-speed);
+        let _ = self.set_motor_2(speed);
+    }
 
-    Ok(())
+    fn reverse(&mut self) {}
+    fn stop(&mut self) {}
 }
 
 #[cfg(test)]

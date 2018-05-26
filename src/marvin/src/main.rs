@@ -2,6 +2,7 @@ extern crate tiny_http;
 extern crate i2cdev;
 
 mod picoborg_rev;
+mod robot_traits;
 
 use tiny_http::{Server, Response};
 use std::io::Cursor;
@@ -61,9 +62,11 @@ impl SpareParts {
                     "set_motor1" => {
                         let epo_status = borg.get_epo().unwrap();
                         println!("EPO status: {}", epo_status);
-                        let power = borg.set_motor1(0.5).unwrap();
+                        let power = borg.set_motor_1(0.5).unwrap();
+                        let power = borg.set_motor_2(0.5).unwrap();
                         thread::sleep(Duration::from_secs(10));
-                        let power = borg.set_motor1(0.0).unwrap();
+                        let power = borg.set_motor_1(0.0).unwrap();
+                        let power = borg.set_motor_2(0.0).unwrap();
                         Response::from_string(format!("[borg] motor1 power at: {}", power))
                     },
                     _ => not_found,
