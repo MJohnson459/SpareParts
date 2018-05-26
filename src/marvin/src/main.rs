@@ -6,6 +6,8 @@ mod picoborg_rev;
 use tiny_http::{Server, Response};
 use std::io::Cursor;
 use std::path::Path;
+use std::thread;
+use std::time::Duration;
 
 use picoborg_rev::PicoBorgRev;
 
@@ -55,6 +57,12 @@ impl SpareParts {
                     "toggle_led" => {
                         let led_on = borg.toggle_led().unwrap();
                         Response::from_string(format!("[borg] led_on: {}", led_on))
+                    },
+                    "set_motor1" => {
+                        let power = borg.set_motor1(0.5).unwrap();
+                        thread::sleep(Duration::from_secs(10));
+                        let power = borg.set_motor1(0.0).unwrap();
+                        Response::from_string(format!("[borg] motor1 power at: {}", power))
                     },
                     _ => not_found,
                 }

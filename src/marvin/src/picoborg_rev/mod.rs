@@ -53,6 +53,25 @@ const COMMAND_VALUE_REV: u8       = 2;     // I2C value representing reverse
 const COMMAND_VALUE_ON: u8        = 1;     // I2C value representing on
 const COMMAND_VALUE_OFF: u8       = 0;     // I2C value representing off
 
+/// https://gpiozero.readthedocs.io/en/stable/api_output.html#motor
+trait Motor {
+    /// Drive the motor backwards.
+    ///
+    /// speed (float) – The speed at which the motor should turn. Can be any value between 0 (stopped) and the default 1 (maximum speed) if pwm was True when the class was constructed (and only 0 or 1 if not).
+    fn backward(speed: f32);
+
+    /// Drive the motor forwards.
+    ///
+    /// speed (float) – The speed at which the motor should turn. Can be any value between 0 (stopped) and the default 1 (maximum speed) if pwm was True when the class was constructed (and only 0 or 1 if not).
+    fn forward(speed: f32);
+
+    /// Reverse the current direction of the motor. If the motor is currently idle this does nothing. Otherwise, the motor’s direction will be reversed at the current speed.
+    fn reverse();
+
+    /// Stop the motor.
+    fn stop();
+}
+
 pub struct PicoBorgRev {
     device: LinuxI2CDevice,
     led_on: bool,
@@ -79,9 +98,31 @@ impl PicoBorgRev {
     pub fn toggle_led(&mut self) -> Result<bool, LinuxI2CError> {
         self.led_on = !self.led_on;
         println!("Toggling led {}", self.led_on);
-        try!(self.device.smbus_write_byte_data(0x01, if self.led_on {COMMAND_VALUE_ON} else {COMMAND_VALUE_OFF}));
+        try!(self.device.smbus_write_byte_data(COMMAND_SET_LED, if self.led_on {COMMAND_VALUE_ON} else {COMMAND_VALUE_OFF}));
 
         Ok(self.led_on)
+    }
+
+    /// Set motor 1 power.
+    /// Range power [-1.0, 1.0]
+    pub fn set_motor1(&mut self, mut power: f32) -> Result<f32, LinuxI2CError> {
+
+        if power > 1.0 {
+            power = 1.0;
+        } else if power < -1.0 {
+            power = -1.0;
+        }
+
+        let pwm = PWM_MAX as f32 * power;
+
+        if power < 0.0 {
+            try!(self.device.smbus_write_byte_data(COMMAND_SET_A_REV, pwm));
+        } else {
+            try!(self.device.smbus_write_byte_data(COMMAND_SET_A_FWD, pwm));
+        }
+
+        println!("Setting motor 1 power: {}", power);
+        Ok(power)
     }
 }
 
