@@ -108,22 +108,34 @@ impl PicoBorgRev {
     pub fn set_motor1(&mut self, power: f32) -> Result<f32, LinuxI2CError> {
 
         let command: u8;
-        let mut pwd: u8;
-        if power < 0 {
+        let mut pwm: u8;
+        if power < 0.0 {
             command = COMMAND_SET_A_REV;
             pwm = (PWM_MAX as f32 * -power) as u8;
-            if pwd > PWM_MAX
-                pwd = PWM_MAX;
         } else {
             command = COMMAND_SET_A_FWD;
             pwm = (PWM_MAX as f32 * power) as u8;
-            if pwd > PWM_MAX
-                pwd = PWM_MAX;
+        }
+
+        if pwm > PWM_MAX { pwm = PWM_MAX; }
 
         try!(self.device.smbus_write_byte_data(command, pwm));
 
         println!("Setting motor 1 power: {}  pwm: {}", power, pwm);
         Ok(power)
+    }
+
+
+    pub fn get_epo(self) -> Result<bool, LinuxI2CError> {
+        let data = self.device.smbus_read_word_data(COMMAND_GET_EPO)?;
+        Ok(data[1] == COMMAND_VALUE_ON)
+    }
+}
+
+
+impl Drop for PicoBorgRev {
+    fn drop(&mut self) {
+        let _ = self.device.smbus_write_byte_data(COMMAND_ALL_OFF, 0);
     }
 }
 

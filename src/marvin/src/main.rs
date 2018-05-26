@@ -59,6 +59,8 @@ impl SpareParts {
                         Response::from_string(format!("[borg] led_on: {}", led_on))
                     },
                     "set_motor1" => {
+                        let epo_status = borg.get_epo().unwrap();
+                        println!("EPO status: {}", epo_status);
                         let power = borg.set_motor1(0.5).unwrap();
                         thread::sleep(Duration::from_secs(10));
                         let power = borg.set_motor1(0.0).unwrap();
