@@ -33,9 +33,11 @@ impl SpareParts {
             let response = {
                 let path: Vec<&str> = request.url().split('/').collect();
 
-                match path[0] {
+                // path[0] should always be "" as min path is "/"
+                assert_eq!(path[0], "");
+                match path[1] {
                     "borg" => self.handle_borg(&path.as_slice()[1..]),
-                    _ => Response::from_string("Request not recognised"),
+                    _ => Response::from_string(format!("Request not recognised: {:?}", path)),
                 }
             };
 
@@ -50,12 +52,12 @@ impl SpareParts {
             Some(ref mut borg) => match request[0] {
                 "toggle_led" => {
                     let led_on = borg.toggle_led().unwrap();
-                    Response::from_string(format!("led_on: {}", led_on))
+                    Response::from_string(format!("[borg] led_on: {}", led_on))
 
                 },
-                _ => Response::from_string("Request not recognised"),
+                _ => Response::from_string(format!("[borg] Request not recognised: {:?}", request)),
                 },
-            None => Response::from_string("PicoBorgRev not available"),
+            None => Response::from_string("[borg] PicoBorgRev not available"),
         }
     }
 }
