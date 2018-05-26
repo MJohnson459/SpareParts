@@ -105,23 +105,24 @@ impl PicoBorgRev {
 
     /// Set motor 1 power.
     /// Range power [-1.0, 1.0]
-    pub fn set_motor1(&mut self, mut power: f32) -> Result<f32, LinuxI2CError> {
+    pub fn set_motor1(&mut self, power: f32) -> Result<f32, LinuxI2CError> {
 
-        if power > 1.0 {
-            power = 1.0;
-        } else if power < -1.0 {
-            power = -1.0;
-        }
-
-        let pwm = PWM_MAX as f32 * power;
-
-        if power < 0.0 {
-            try!(self.device.smbus_write_byte_data(COMMAND_SET_A_REV, pwm));
+        let command: u8;
+        let mut pwd: u8;
+        if power < 0 {
+            command = COMMAND_SET_A_REV;
+            pwm = (PWM_MAX as f32 * -power) as u8;
+            if pwd > PWM_MAX
+                pwd = PWM_MAX;
         } else {
-            try!(self.device.smbus_write_byte_data(COMMAND_SET_A_FWD, pwm));
-        }
+            command = COMMAND_SET_A_FWD;
+            pwm = (PWM_MAX as f32 * power) as u8;
+            if pwd > PWM_MAX
+                pwd = PWM_MAX;
 
-        println!("Setting motor 1 power: {}", power);
+        try!(self.device.smbus_write_byte_data(command, pwm));
+
+        println!("Setting motor 1 power: {}  pwm: {}", power, pwm);
         Ok(power)
     }
 }
