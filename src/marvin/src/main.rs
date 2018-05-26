@@ -47,7 +47,7 @@ impl SpareParts {
         match self.borg {
             Some(borg) => match request[0] {
                 "toggle_led" => {
-                    let led_on = borg.toggle_led();
+                    let led_on = borg.toggle_led().unwrap();
                     Response::from_string(format!("led_on: {}", led_on))
 
                 },
