@@ -30,11 +30,13 @@ impl SpareParts {
                 request.url(),
             );
 
-            let path: Vec<&str> = request.url().split('/').collect();
+            let response = {
+                let path: Vec<&str> = request.url().split('/').collect();
 
-            let response = match path[0] {
-                "borg" => self.handle_borg(&path.as_slice()[1..]),
-                _ => Response::from_string("Request not recognised"),
+                match path[0] {
+                    "borg" => self.handle_borg(&path.as_slice()[1..]),
+                    _ => Response::from_string("Request not recognised"),
+                }
             };
 
             request.respond(response);
@@ -45,7 +47,7 @@ impl SpareParts {
     fn handle_borg(&mut self, request: &[&str]) -> Response<Cursor<Vec<u8>>> {
         // Check borg is available
         match self.borg {
-            Some(borg) => match request[0] {
+            Some(ref mut borg) => match request[0] {
                 "toggle_led" => {
                     let led_on = borg.toggle_led().unwrap();
                     Response::from_string(format!("led_on: {}", led_on))
@@ -62,6 +64,6 @@ impl SpareParts {
 fn main() {
     println!("Hello, world!");
 
-    let robot = SpareParts::new();
+    let mut robot = SpareParts::new();
     robot.run();
 }
