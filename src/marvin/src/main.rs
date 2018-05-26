@@ -48,15 +48,19 @@ impl SpareParts {
 
     fn handle_borg(&mut self, request: &[&str]) -> Response<Cursor<Vec<u8>>> {
         // Check borg is available
+        let not_found = Response::from_string(format!("[borg] Request not recognised: {:?}", request));
         match self.borg {
-            Some(ref mut borg) => match request[0] {
-                "toggle_led" => {
-                    let led_on = borg.toggle_led().unwrap();
-                    Response::from_string(format!("[borg] led_on: {}", led_on))
-
-                },
-                _ => Response::from_string(format!("[borg] Request not recognised: {:?}", request)),
-                },
+            Some(ref mut borg) => if request.len() > 1 {
+                match request[1] {
+                    "toggle_led" => {
+                        let led_on = borg.toggle_led().unwrap();
+                        Response::from_string(format!("[borg] led_on: {}", led_on))
+                    },
+                    _ => not_found,
+                }
+            } else {
+                not_found
+            },
             None => Response::from_string("[borg] PicoBorgRev not available"),
         }
     }
