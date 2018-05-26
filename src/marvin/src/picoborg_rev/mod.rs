@@ -1,5 +1,5 @@
-// use std::thread;
-// use std::time::Duration;
+use std::thread;
+use std::time::Duration;
 use std::path::Path;
 
 use i2cdev::core::*;
