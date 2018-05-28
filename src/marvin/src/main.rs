@@ -73,7 +73,7 @@ impl SpareParts {
             } else {
                 not_found
             },
-            None => Response::from_string("[blinkt] PicoBorgRev not available"),
+            None => Response::from_string("[blinkt] Blinkt not available"),
         }
     }
 
