@@ -61,7 +61,11 @@ impl SpareParts {
             Some(ref mut blinkt) => if request.len() > 1 {
                 match request[1] {
                     "strobe_led" => {
-                        blinkt.strobe_led();
+                        blinkt.set_all(0, 255, 255);
+                        blinkt.show();
+                        thread::sleep(Duration::new(2,0));
+                        blinkt.set_all(0, 0, 0);
+                        blinkt.show();
                         Response::from_string(format!("[blinkt] strobing LEDs"))
                     },
                     _ => not_found,
