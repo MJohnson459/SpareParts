@@ -229,7 +229,10 @@ impl Robot for PicoBorgRev {
     }
 
     fn reverse(&mut self) {}
-    fn stop(&mut self) {}
+
+    fn stop(&mut self) {
+        let _ = self.set_motors(0.0);
+    }
 }
 
 #[cfg(test)]

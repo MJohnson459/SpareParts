@@ -22,9 +22,27 @@ struct SpareParts {
 
 impl SpareParts {
     fn new() -> SpareParts {
+        let borg_result = PicoBorgRev::new(Path::new("/dev/i2c-1"));
+        let borg = match borg_result {
+            Ok(borg) => Some(borg),
+            Err(error) => {
+                println!("Failed to create PicoBorgRev interface: {:?}", error);
+                None
+            }
+        }
+
+        let blinkt_result = Blinkt::new();
+        let blinkt = match blinkt_result {
+            Ok(blinkt) => Some(blinkt),
+            Err(error) => {
+                println!("Failed to create Blinkt interface: {:?}", error);
+                None
+            }
+        }
+
         SpareParts {
-            borg: PicoBorgRev::new(Path::new("/dev/i2c-1")).ok(),
-            blinkt: Blinkt::new().ok(),
+            borg: borg,
+            blinkt: blinkt,
         }
     }
 
@@ -87,14 +105,16 @@ impl SpareParts {
                         let led_on = borg.toggle_led().unwrap();
                         Response::from_string(format!("[borg] led_on: {}", led_on))
                     },
-                    "set_motor1" => {
+                    "set_motors" => {
                         let epo_status = borg.get_epo().unwrap();
                         println!("EPO status: {}", epo_status);
-                        let power = borg.set_motor_1(0.5).unwrap();
-                        let power = borg.set_motor_2(0.5).unwrap();
-                        thread::sleep(Duration::from_secs(10));
-                        let power = borg.set_motor_1(0.0).unwrap();
-                        let power = borg.set_motor_2(0.0).unwrap();
+                        let power = borg.set_motors(0.5).unwrap();
+                        Response::from_string(format!("[borg] motor1 power at: {}", power))
+                    },
+                    "clear_motors" => {
+                        let epo_status = borg.get_epo().unwrap();
+                        println!("EPO status: {}", epo_status);
+                        let power = borg.set_motors(0.0).unwrap();
                         Response::from_string(format!("[borg] motor1 power at: {}", power))
                     },
                     _ => not_found,
