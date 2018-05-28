@@ -32,7 +32,7 @@ impl Blinkt {
     }
 
     fn write_byte(&self, mut byte: u8) {
-        for x in 0..8 {
+        for _ in 0..8 {
             self.data_pin.set_value(byte & 0b1000000).unwrap();
             self.clock_pin.set_value(1).unwrap();
             sleep(Duration::new(0, 500));
@@ -46,7 +46,7 @@ impl Blinkt {
     // for some reason it takes 36 clocks, the other IC takes just 4 (number of pixels/2)
     fn eof(&self) {
         self.data_pin.set_value(0).unwrap();
-        for x in 0..36 {
+        for _ in 0..36 {
             self.clock_pin.set_value(1).unwrap();
             sleep(Duration::new(0, 500));
             self.clock_pin.set_value(0).unwrap();
@@ -56,7 +56,7 @@ impl Blinkt {
 
     fn sof(&self) {
         self.data_pin.set_value(0).unwrap();
-        for x in 0..32 {
+        for _ in 0..32 {
             self.clock_pin.set_value(1).unwrap();
             sleep(Duration::new(0, 500));
             self.clock_pin.set_value(0).unwrap();

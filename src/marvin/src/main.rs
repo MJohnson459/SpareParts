@@ -29,7 +29,7 @@ impl SpareParts {
                 println!("Failed to create PicoBorgRev interface: {:?}", error);
                 None
             }
-        }
+        };
 
         let blinkt_result = Blinkt::new();
         let blinkt = match blinkt_result {
@@ -38,7 +38,7 @@ impl SpareParts {
                 println!("Failed to create Blinkt interface: {:?}", error);
                 None
             }
-        }
+        };
 
         SpareParts {
             borg: borg,
