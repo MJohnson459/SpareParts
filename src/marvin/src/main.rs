@@ -1,31 +1,35 @@
 extern crate tiny_http;
 extern crate i2cdev;
+extern crate sysfs_gpio;
 
 mod picoborg_rev;
+mod blinkt;
 mod robot_traits;
 
-use tiny_http::{Server, Response};
 use std::io::Cursor;
 use std::path::Path;
 use std::thread;
 use std::time::Duration;
+use tiny_http::{Server, Response};
 
 use picoborg_rev::PicoBorgRev;
+use blinkt::Blinkt;
 
 struct SpareParts {
     borg: Option<PicoBorgRev>,
+    blinkt: Option<Blinkt>,
 }
 
 impl SpareParts {
     fn new() -> SpareParts {
         SpareParts {
             borg: PicoBorgRev::new(Path::new("/dev/i2c-1")).ok(),
+            blinkt: Blinkt::new().ok(),
         }
     }
 
     fn run(&mut self) {
         let server = Server::http("0.0.0.0:8000").unwrap();
-
 
         for request in server.incoming_requests() {
             println!("received request! method: {:?}, url: {:?}",
@@ -40,6 +44,7 @@ impl SpareParts {
                 assert_eq!(path[0], "");
                 match path[1] {
                     "borg" => self.handle_borg(&path.as_slice()[1..]),
+                    "blinkt" => self.handle_blinkt(&path.as_slice()[1..]),
                     _ => Response::from_string(format!("Request not recognised: {:?}", path)),
                 }
             };
@@ -47,6 +52,25 @@ impl SpareParts {
             request.respond(response);
         }
 
+    }
+
+
+    fn handle_blinkt(&mut self, request: &[&str]) -> Response<Cursor<Vec<u8>>> {
+        let not_found = Response::from_string(format!("[blinkt] Request not recognised: {:?}", request));
+        match self.blinkt {
+            Some(ref mut blinkt) => if request.len() > 1 {
+                match request[1] {
+                    "strobe_led" => {
+                        blinkt.strobe_led();
+                        Response::from_string(format!("[blinkt] strobing LEDs"))
+                    },
+                    _ => not_found,
+                }
+            } else {
+                not_found
+            },
+            None => Response::from_string("[blinkt] PicoBorgRev not available"),
+        }
     }
 
     fn handle_borg(&mut self, request: &[&str]) -> Response<Cursor<Vec<u8>>> {

@@ -6,3 +6,4 @@ authors = ["Michael Johnson <mjohnson459@gmail.com>"]
 [dependencies]
 tiny_http = "0.6"
 i2cdev = "0.4"
+sysfs_gpio = "0.5"

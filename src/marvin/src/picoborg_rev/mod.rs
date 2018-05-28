@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::thread;
 use std::time::Duration;
 use std::path::Path;
@@ -8,6 +10,7 @@ use i2cdev::core::*;
 use i2cdev::linux::{LinuxI2CDevice, LinuxI2CError};
 
 use robot_traits::Robot;
+
 
 const I2C_ADDRESS: u16 = 0x44;
 
