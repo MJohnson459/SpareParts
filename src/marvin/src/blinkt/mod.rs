@@ -27,53 +27,53 @@ impl Blinkt {
         })
     }
 
-    pub fn strobe_led(&self) {
-        println!("Whu Whu");
-    }
-
-    fn write_byte(&self, mut byte: u8) {
+    fn write_byte(&self, mut byte: u8) -> Result<(), Error> {
         for _ in 0..8 {
-            self.data_pin.set_value(byte & 0b1000000).unwrap();
-            self.clock_pin.set_value(1).unwrap();
+            self.data_pin.set_value(byte & 0b1000000)?;
+            self.clock_pin.set_value(1)?;
             sleep(Duration::new(0, 500));
             byte <<= 1;
-            self.clock_pin.set_value(0).unwrap();
+            self.clock_pin.set_value(0)?;
             sleep(Duration::new(0, 500));
         }
+        Ok(())
     }
 
     // Emit exactly enough clock pulses to latch the small dark die APA102s which are weird
     // for some reason it takes 36 clocks, the other IC takes just 4 (number of pixels/2)
-    fn eof(&self) {
-        self.data_pin.set_value(0).unwrap();
+    fn eof(&self) -> Result<(), Error> {
+        self.data_pin.set_value(0)?;
         for _ in 0..36 {
-            self.clock_pin.set_value(1).unwrap();
+            self.clock_pin.set_value(1)?;
             sleep(Duration::new(0, 500));
-            self.clock_pin.set_value(0).unwrap();
+            self.clock_pin.set_value(0)?;
             sleep(Duration::new(0, 500));
         }
+        Ok(())
     }
 
-    fn sof(&self) {
-        self.data_pin.set_value(0).unwrap();
+    fn sof(&self) -> Result<(), Error> {
+        self.data_pin.set_value(0)?;
         for _ in 0..32 {
-            self.clock_pin.set_value(1).unwrap();
+            self.clock_pin.set_value(1)?;
             sleep(Duration::new(0, 500));
-            self.clock_pin.set_value(0).unwrap();
+            self.clock_pin.set_value(0)?;
             sleep(Duration::new(0, 500));
         }
+        Ok(())
     }
 
-    pub fn show(&self) {
-        self.sof();
+    pub fn show(&self) -> Result<(), Error> {
+        self.sof()?;
         for &(r, g, b, brightness) in &self.pixels {
-            self.write_byte(0b11100000 | brightness);
-            self.write_byte(b);
-            self.write_byte(g);
-            self.write_byte(r);
+            self.write_byte(0b11100000 | brightness)?;
+            self.write_byte(b)?;
+            self.write_byte(g)?;
+            self.write_byte(r)?;
         }
 
-        self.eof();
+        self.eof()?;
+        Ok(())
     }
 
     ///  Set the RGB value and optionally brightness of all pixels
