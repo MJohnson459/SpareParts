@@ -41,3 +41,8 @@ pub trait Robot {
     /// Stop the robot.
     fn stop(&mut self);
 }
+
+pub trait Led {
+    fn led_on(&mut self);
+    fn led_off(&mut self);
+}

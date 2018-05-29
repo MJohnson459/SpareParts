@@ -9,7 +9,7 @@ use i2cdev::core::*;
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use i2cdev::linux::{LinuxI2CDevice, LinuxI2CError};
 
-use robot_traits::Robot;
+use robot_traits::{Robot, Led};
 
 
 const I2C_ADDRESS: u16 = 0x44;
@@ -234,6 +234,17 @@ impl Robot for PicoBorgRev {
         let _ = self.set_motors(0.0);
     }
 }
+
+impl Led for PicoBorgRev {
+    fn led_on(&mut self) {
+        let _ = self.device.smbus_write_byte_data(COMMAND_SET_LED, COMMAND_VALUE_ON);
+    }
+
+    fn led_off(&mut self) {
+        let _ = self.device.smbus_write_byte_data(COMMAND_SET_LED, COMMAND_VALUE_OFF);
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

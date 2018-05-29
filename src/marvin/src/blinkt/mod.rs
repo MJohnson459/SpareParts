@@ -2,11 +2,12 @@ use sysfs_gpio::{Direction, Pin, Error};
 use std::thread::sleep;
 use std::time::Duration;
 
+use robot_traits::Led;
+
 const DAT: u64 = 23;
 const CLK: u64 = 24;
 const NUM_PIXELS: usize = 8;
 const BRIGHTNESS: u8 = 7;
-
 
 pub struct Blinkt {
     data_pin: Pin,
@@ -123,6 +124,18 @@ impl Drop for Blinkt {
     fn drop(&mut self) {
         self.data_pin.unexport().unwrap();
         self.data_pin.unexport().unwrap();
+    }
+}
+
+impl Led for Blinkt {
+    fn led_on(&mut self) {
+        self.set_all(255, 255, 255);
+        self.show();
+    }
+
+    fn led_off(&mut self) {
+        self.set_all(0, 0, 0);
+        self.show();
     }
 }
 
