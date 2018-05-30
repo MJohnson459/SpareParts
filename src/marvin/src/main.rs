@@ -27,7 +27,7 @@ impl SpareParts<PicoBorgRev, PicoBorgRev> {
             Ok(borg) => {
                 Some(SpareParts {
                     robot: Some(borg),
-                    led: Some(borg),
+                    led: None, // Some(borg),
                 })
             },
             Err(error) => {
@@ -38,7 +38,7 @@ impl SpareParts<PicoBorgRev, PicoBorgRev> {
     }
 }
 
-impl<T: Robot> SpareParts<T, Blinkt> {
+impl SpareParts<PicoBorgRev, Blinkt> {
     fn new_blinkt() -> Option<Self> {
         match Blinkt::new() {
             Ok(blinkt) => {
@@ -133,6 +133,6 @@ impl<T: Robot, U: Led> SpareParts<T, U> {
 fn main() {
     println!("Hello, world!");
 
-    let mut robot = SpareParts::new_borg().expect("Missing PicoBorgRev");
+    let mut robot = SpareParts::new_blinkt().expect("Missing PicoBorgRev");
     robot.run();
 }
