@@ -1,4 +1,3 @@
-
 /// https://gpiozero.readthedocs.io/en/stable/api_output.html#motor
 pub trait Motor {
     /// Drive the motor backwards.

@@ -1,6 +1,6 @@
-use sysfs_gpio::{Direction, Pin, Error};
 use std::thread::sleep;
 use std::time::Duration;
+use sysfs_gpio::{Direction, Error, Pin};
 
 use robot_traits::Led;
 
@@ -24,7 +24,7 @@ impl Blinkt {
         Ok(Blinkt {
             data_pin: data_pin,
             clock_pin: clock_pin,
-            pixels: vec![(0,0,0,BRIGHTNESS); NUM_PIXELS],
+            pixels: vec![(0, 0, 0, BRIGHTNESS); NUM_PIXELS],
         })
     }
 
@@ -98,7 +98,6 @@ impl Blinkt {
     //     (r, g, b, round(brightness, 3))
     // }
 
-
     /// Set the RGB value, and optionally brightness, of a single pixel
     ///
     /// If you don't supply a brightness value, the last value will be kept.
@@ -110,14 +109,13 @@ impl Blinkt {
     /// :param brightness: Brightness: 0.0 to 1.0 (default around 0.2)
     pub fn set_pixel(&mut self, x: usize, r: u8, g: u8, b: u8, _: f32) {
         // if brightness is None {
-            // brightness = pixels[x][3]
+        // brightness = pixels[x][3]
         // } else {
         //     brightness = int(31.0 * brightness) & 0b11111
         // }
 
         self.pixels[x] = (r, g, b, BRIGHTNESS)
     }
-
 }
 
 impl Drop for Blinkt {
@@ -138,5 +136,3 @@ impl Led for Blinkt {
         let _ = self.show();
     }
 }
-
-
