@@ -130,12 +130,12 @@ impl Drop for Blinkt {
 impl Led for Blinkt {
     fn led_on(&mut self) {
         self.set_all(255, 255, 255);
-        self.show();
+        let _ = self.show();
     }
 
     fn led_off(&mut self) {
         self.set_all(0, 0, 0);
-        self.show();
+        let _ = self.show();
     }
 }
 
