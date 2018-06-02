@@ -1,6 +1,6 @@
 use std::thread::sleep;
 use std::time::Duration;
-use sysfs_gpio::{Direction, Error, Pin};
+use sysfs_gpio::{Error, Pin};
 
 use robot_traits::Led;
 

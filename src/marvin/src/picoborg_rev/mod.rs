@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 
 use std::path::Path;
-use std::thread;
-use std::time::Duration;
 
 use i2cdev::core::*;
 
