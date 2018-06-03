@@ -1,13 +1,13 @@
 #![allow(dead_code)]
 
+mod impl_traits;
+
 use std::path::Path;
 
 use i2cdev::core::*;
 
 #[cfg(any(target_os = "linux", target_os = "android"))]
 use i2cdev::linux::{LinuxI2CDevice, LinuxI2CError};
-
-use robot_traits::{Led, Robot};
 
 const I2C_ADDRESS: u16 = 0x44;
 
@@ -57,7 +57,6 @@ const COMMAND_VALUE_OFF: u8 = 0; // I2C value representing off
 
 pub struct PicoBorgRev {
     device: LinuxI2CDevice,
-    led_on: bool,
 }
 
 impl PicoBorgRev {
@@ -77,26 +76,7 @@ impl PicoBorgRev {
             println!("Found PicoBorg Reverse at {}", I2C_ADDRESS);
         }
 
-        Ok(PicoBorgRev {
-            device: device,
-            led_on: false,
-        })
-    }
-
-    // real code should probably not use unwrap()
-    pub fn toggle_led(&mut self) -> Result<bool, LinuxI2CError> {
-        self.led_on = !self.led_on;
-        println!("Toggling led {}", self.led_on);
-        try!(self.device.smbus_write_byte_data(
-            COMMAND_SET_LED,
-            if self.led_on {
-                COMMAND_VALUE_ON
-            } else {
-                COMMAND_VALUE_OFF
-            }
-        ));
-
-        Ok(self.led_on)
+        Ok(PicoBorgRev {device})
     }
 
     /// Set motor 1 power.
@@ -214,49 +194,19 @@ impl PicoBorgRev {
 
         Ok(status == COMMAND_VALUE_ON)
     }
+
+    pub fn led_on(&mut self) -> Result<(), LinuxI2CError> {
+        self.device.smbus_write_byte_data(COMMAND_SET_LED, COMMAND_VALUE_ON)
+    }
+
+    pub fn led_off(&mut self) -> Result<(), LinuxI2CError> {
+        self.device.smbus_write_byte_data(COMMAND_SET_LED, COMMAND_VALUE_OFF)
+    }
 }
 
 impl Drop for PicoBorgRev {
     fn drop(&mut self) {
         let _ = self.motors_off();
-    }
-}
-
-impl Robot for PicoBorgRev {
-    fn backward(&mut self, speed: f32) {
-        let _ = self.set_motors(-speed);
-    }
-
-    fn forward(&mut self, speed: f32) {
-        let _ = self.set_motors(speed);
-    }
-
-    fn left(&mut self, speed: f32) {
-        let _ = self.set_motor_1(speed);
-        let _ = self.set_motor_2(-speed);
-    }
-
-    fn right(&mut self, speed: f32) {
-        let _ = self.set_motor_1(-speed);
-        let _ = self.set_motor_2(speed);
-    }
-
-    fn reverse(&mut self) {}
-
-    fn stop(&mut self) {
-        let _ = self.set_motors(0.0);
-    }
-}
-
-impl Led for PicoBorgRev {
-    fn led_on(&mut self) {
-        let _ = self.device
-            .smbus_write_byte_data(COMMAND_SET_LED, COMMAND_VALUE_ON);
-    }
-
-    fn led_off(&mut self) {
-        let _ = self.device
-            .smbus_write_byte_data(COMMAND_SET_LED, COMMAND_VALUE_OFF);
     }
 }
 
