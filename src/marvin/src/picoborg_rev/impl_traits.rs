@@ -38,4 +38,3 @@ impl Led for PicoBorgRev {
         let _ = self.set_led(false);
     }
 }
-

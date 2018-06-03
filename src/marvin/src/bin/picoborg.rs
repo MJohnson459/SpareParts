@@ -8,8 +8,8 @@ use std::path::Path;
 use std::rc::Rc;
 
 use marvin::picoborg_rev::PicoBorgRev;
-use marvin::spare_parts::SpareParts;
 use marvin::robot_server::RobotServer;
+use marvin::spare_parts::SpareParts;
 
 fn new_borg() -> Option<SpareParts<PicoBorgRev, PicoBorgRev>> {
     match PicoBorgRev::new(Path::new("/dev/i2c-1")) {

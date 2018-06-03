@@ -5,7 +5,7 @@ use tiny_http::{Response, Server};
 use robot_traits::{Led, Robot};
 use spare_parts::SpareParts;
 
-pub struct RobotServer{}
+pub struct RobotServer {}
 
 impl RobotServer {
     pub fn run<T: Robot, U: Led>(spare_parts: &mut SpareParts<T, U>) {
@@ -36,8 +36,7 @@ impl RobotServer {
 }
 
 fn handle_led<T: Led>(led: &mut Option<Rc<T>>, request: &[&str]) -> Response<Cursor<Vec<u8>>> {
-    let not_found =
-        Response::from_string(format!("[led] Request not recognised: {:?}", request));
+    let not_found = Response::from_string(format!("[led] Request not recognised: {:?}", request));
     match led {
         Some(ref mut led) => if request.len() > 1 {
             let mled = Rc::get_mut(led).unwrap();
@@ -59,10 +58,12 @@ fn handle_led<T: Led>(led: &mut Option<Rc<T>>, request: &[&str]) -> Response<Cur
     }
 }
 
-fn handle_robot<T: Robot>(robot: &mut Option<Rc<T>>, request: &[&str]) -> Response<Cursor<Vec<u8>>> {
+fn handle_robot<T: Robot>(
+    robot: &mut Option<Rc<T>>,
+    request: &[&str],
+) -> Response<Cursor<Vec<u8>>> {
     // Check robot is available
-    let not_found =
-        Response::from_string(format!("[robot] Request not recognised: {:?}", request));
+    let not_found = Response::from_string(format!("[robot] Request not recognised: {:?}", request));
     match robot {
         Some(ref mut robot) => if request.len() > 1 {
             let mrobot = Rc::get_mut(robot).unwrap();
