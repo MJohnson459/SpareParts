@@ -31,11 +31,11 @@ impl Robot for PicoBorgRev {
 
 impl Led for PicoBorgRev {
     fn led_on(&mut self) {
-        let _ = self.led_on();
+        let _ = self.set_led(true);
     }
 
     fn led_off(&mut self) {
-        let _ = self.led_off();
+        let _ = self.set_led(false);
     }
 }
 
