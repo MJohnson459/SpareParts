@@ -1,6 +1,6 @@
 use std::thread::sleep;
 use std::time::Duration;
-use sysfs_gpio::{Error, Pin};
+use sysfs_gpio::{Direction, Error, Pin};
 
 use robot_traits::Led;
 
@@ -21,6 +21,8 @@ impl Blinkt {
         let clock_pin = Pin::new(CLK);
         data_pin.export()?;
         clock_pin.export()?;
+        data_pin.set_direction(Direction::Out)?;
+        clock_pin.set_direction(Direction::Out)?;
         let pixels = vec![(0, 0, 0, BRIGHTNESS); NUM_PIXELS];
         Ok(Blinkt {data_pin, clock_pin, pixels})
     }
