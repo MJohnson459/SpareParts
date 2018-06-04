@@ -47,7 +47,7 @@ fn handle_led<T: Led>(led: &mut Option<Rc<T>>, request: &[&str]) -> Response<Cur
                 }
                 "led_off" => {
                     mled.led_off();
-                    Response::from_string(format!("[led] turning LED on"))
+                    Response::from_string(format!("[led] turning LED off"))
                 }
                 _ => not_found,
             }

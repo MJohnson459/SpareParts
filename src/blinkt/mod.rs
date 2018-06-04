@@ -125,11 +125,17 @@ impl Drop for Blinkt {
 impl Led for Blinkt {
     fn led_on(&mut self) {
         self.set_all(255, 255, 255);
-        let _ = self.show();
+        match self.show() {
+            Ok(()) => {}
+            Err(error) => println!("[blinkt] Error turning on led: {:?}", error)
+        }
     }
 
     fn led_off(&mut self) {
         self.set_all(0, 0, 0);
-        let _ = self.show();
+        match self.show() {
+            Ok(()) => {}
+            Err(error) => println!("[blinkt] Error turning off led: {:?}", error)
+        }
     }
 }
