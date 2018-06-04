@@ -30,6 +30,6 @@ fn new_blinkt() -> Option<SpareParts<PicoBorgRev, Blinkt>> {
 fn main() {
     println!("Hello, world!");
 
-    let mut blinkt = new_blinkt().expect("Failed to find PicoBorgRev or Blinkt");
+    let mut blinkt = new_blinkt().expect("Failed to find Blinkt");
     RobotServer::run(&mut blinkt);
 }

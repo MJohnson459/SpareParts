@@ -21,11 +21,8 @@ impl Blinkt {
         let clock_pin = Pin::new(CLK);
         data_pin.export()?;
         clock_pin.export()?;
-        Ok(Blinkt {
-            data_pin: data_pin,
-            clock_pin: clock_pin,
-            pixels: vec![(0, 0, 0, BRIGHTNESS); NUM_PIXELS],
-        })
+        let pixels = vec![(0, 0, 0, BRIGHTNESS); NUM_PIXELS];
+        Ok(Blinkt {data_pin, clock_pin, pixels})
     }
 
     fn write_byte(&self, mut byte: u8) -> Result<(), Error> {
