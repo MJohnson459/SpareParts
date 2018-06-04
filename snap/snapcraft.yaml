@@ -16,6 +16,6 @@ apps:
 
 parts:
   marvin:
-    source: src/marvin
+    source: .
     plugin: rust
 
