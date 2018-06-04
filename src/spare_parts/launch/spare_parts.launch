@@ -1,3 +1,0 @@
-<launch>
-  <node pkg="spare_parts" type="spare_parts" name="controller"/>
-</launch>
