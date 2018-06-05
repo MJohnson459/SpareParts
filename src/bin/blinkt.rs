@@ -1,12 +1,13 @@
 extern crate i2cdev;
 extern crate sysfs_gpio;
 extern crate tiny_http;
+extern crate blinkt;
 
 extern crate marvin;
 
 use std::rc::Rc;
+use blinkt::Blinkt;
 
-use marvin::blinkt::Blinkt;
 use marvin::picoborg_rev::PicoBorgRev;
 use marvin::robot_server::RobotServer;
 use marvin::spare_parts::SpareParts;

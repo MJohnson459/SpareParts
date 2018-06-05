@@ -7,3 +7,4 @@ authors = ["Michael Johnson <mjohnson459@gmail.com>"]
 tiny_http = "0.6"
 i2cdev = "0.4"
 sysfs_gpio = "0.5"
+blinkt = "0.4"
