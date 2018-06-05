@@ -1,3 +1,5 @@
+use blinkt::Blinkt;
+
 /// https://gpiozero.readthedocs.io/en/stable/api_output.html#motor
 pub trait Motor {
     /// Drive the motor backwards.
@@ -44,4 +46,22 @@ pub trait Robot {
 pub trait Led {
     fn led_on(&mut self);
     fn led_off(&mut self);
+}
+
+impl Led for Blinkt {
+    fn led_on(&mut self) {
+        self.set_all(255, 255, 255);
+        match self.show() {
+            Ok(()) => {}
+            Err(error) => println!("[blinkt] Error turning on led: {:?}", error)
+        }
+    }
+
+    fn led_off(&mut self) {
+        self.set_all(0, 0, 0);
+        match self.show() {
+            Ok(()) => {}
+            Err(error) => println!("[blinkt] Error turning off led: {:?}", error)
+        }
+    }
 }

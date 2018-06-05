@@ -1,8 +1,7 @@
 use std::thread::sleep;
 use std::time::Duration;
 use sysfs_gpio::{Direction, Error, Pin};
-
-use robot_traits::Led;
+use std::u8;
 
 const DAT: u64 = 23;
 const CLK: u64 = 24;
@@ -39,8 +38,9 @@ impl Blinkt {
         Ok(())
     }
 
-    // Emit exactly enough clock pulses to latch the small dark die APA102s which are weird
-    // for some reason it takes 36 clocks, the other IC takes just 4 (number of pixels/2)
+    /// Emit exactly enough clock pulses to latch the small dark die APA102s
+    /// which are weird and for some reason it takes 36 clocks, the other IC
+    /// takes just 4 (number of pixels/2)
     fn eof(&self) -> Result<(), Error> {
         self.data_pin.set_value(0)?;
         for _ in 0..36 {
@@ -52,6 +52,7 @@ impl Blinkt {
         Ok(())
     }
 
+    /// Start of file command to prepare for sending data
     fn sof(&self) -> Result<(), Error> {
         self.data_pin.set_value(0)?;
         for _ in 0..32 {
@@ -63,6 +64,7 @@ impl Blinkt {
         Ok(())
     }
 
+    /// Send all of the stored pixel values to the IC
     pub fn show(&self) -> Result<(), Error> {
         self.sof()?;
         for &(r, g, b, brightness) in &self.pixels {
@@ -77,25 +79,34 @@ impl Blinkt {
     }
 
     ///  Set the RGB value and optionally brightness of all pixels
-    ///  If you don't supply a brightness value, the last value set for each pixel be kept.
-    ///  :param r: Amount of red: 0 to 255
-    ///  :param g: Amount of green: 0 to 255
-    ///  :param b: Amount of blue: 0 to 255
+    ///  If you don't supply a brightness value, the last value set for each
+    ///  pixel be kept.
+    ///
+    ///  :param r: Amount of red
+    ///  :param g: Amount of green
+    ///  :param b: Amount of blue
     ///  :param brightness: Brightness: 0.0 to 1.0 (default around 0.2)
     pub fn set_all(&mut self, r: u8, g: u8, b: u8) {
         for x in 0..NUM_PIXELS {
-            self.set_pixel(x, r, g, b, 0.3)
+            self.set_pixel(x, r, g, b, None)
         }
     }
 
-    // /// Get the RGB and brightness value of a specific pixel"""
-    // pub fn get_pixel(&self, x: u8) -> (u8, u8, u8, f32) {
-    //
-    //     r, g, b, brightness = pixels[x]
-    //     brightness /= 31.0
-    //
-    //     (r, g, b, round(brightness, 3))
-    // }
+    ///  Clear the pixel buffer
+    pub fn clear(&mut self) {
+        for x in 0..NUM_PIXELS {
+            self.set_pixel(x, 0, 0, 0, None)
+        }
+    }
+
+    /// Get the RGB and brightness value of a specific pixel
+    pub fn get_pixel(&self, x: usize) -> (u8, u8, u8, f32) {
+
+        let (r, g, b, brightness) = self.pixels[x];
+        let brightness = brightness as f32 / u8::MAX as f32;
+
+        (r, g, b, brightness)
+    }
 
     /// Set the RGB value, and optionally brightness, of a single pixel
     ///
@@ -106,38 +117,21 @@ impl Blinkt {
     /// :param g: Amount of green: 0 to 255
     /// :param b: Amount of blue: 0 to 255
     /// :param brightness: Brightness: 0.0 to 1.0 (default around 0.2)
-    pub fn set_pixel(&mut self, x: usize, r: u8, g: u8, b: u8, _: f32) {
-        // if brightness is None {
-        // brightness = pixels[x][3]
-        // } else {
-        //     brightness = int(31.0 * brightness) & 0b11111
-        // }
+    pub fn set_pixel(&mut self, x: usize, r: u8, g: u8, b: u8, brightness: Option<f32>) {
+        let brightness = match brightness {
+            Some(brightness) => (u8::MAX as f32 * brightness) as u8 & 0b11111,
+            None => BRIGHTNESS
+        };
 
-        self.pixels[x] = (r, g, b, BRIGHTNESS)
+        self.pixels[x] = (r, g, b, brightness)
     }
 }
 
 impl Drop for Blinkt {
     fn drop(&mut self) {
+        self.clear();
+        let _ = self.show(); // TODO: Failed to shutdown properly?
         self.data_pin.unexport().unwrap();
         self.data_pin.unexport().unwrap();
-    }
-}
-
-impl Led for Blinkt {
-    fn led_on(&mut self) {
-        self.set_all(255, 255, 255);
-        match self.show() {
-            Ok(()) => {}
-            Err(error) => println!("[blinkt] Error turning on led: {:?}", error)
-        }
-    }
-
-    fn led_off(&mut self) {
-        self.set_all(0, 0, 0);
-        match self.show() {
-            Ok(()) => {}
-            Err(error) => println!("[blinkt] Error turning off led: {:?}", error)
-        }
     }
 }
