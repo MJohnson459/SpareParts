@@ -3,7 +3,7 @@ use std::rc::Rc;
 use tiny_http::{Response, Server};
 
 use robot_traits::{Led, Robot};
-use spare_parts::SpareParts;
+use SpareParts;
 
 pub struct RobotServer {}
 
