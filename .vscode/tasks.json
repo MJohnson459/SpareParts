@@ -1,0 +1,41 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "deploy",
+            "type": "shell",
+            "command": "./scripts/deploy"
+        },
+        {
+            "label": "[rpi] cargo build --release",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build",
+                "--target=armv7-unknown-linux-gnueabihf",
+                "--release"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
+            "label": "[rpi] cargo build",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build",
+                "--target=armv7-unknown-linux-gnueabihf"
+            ],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
