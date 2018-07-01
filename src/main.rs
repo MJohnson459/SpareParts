@@ -3,22 +3,14 @@ extern crate picoborgrev;
 extern crate robot_traits;
 extern crate tiny_http;
 
-pub mod robot_server;
-
 use linux_embedded_hal::I2cdev;
 use picoborgrev::PicoBorgRev;
 use robot_traits::{Led, Robot};
+
 use std::path::Path;
-use std::rc::Rc;
 use std::thread::sleep;
 use std::time::Duration;
 
-use robot_server::RobotServer;
-
-pub struct SpareParts<T: Robot, U: Led> {
-    pub robot: Option<Rc<T>>,
-    pub led: Option<Rc<U>>,
-}
 
 fn main() {
     println!("Hello, world!");
@@ -31,12 +23,4 @@ fn main() {
         borg.set_led(false).unwrap();
         sleep(Duration::from_millis(500));
     }
-
-    let rb = Rc::new(borg);
-    let mut borg = SpareParts {
-        robot: Some(Rc::clone(&rb)),
-        led: Some(Rc::clone(&rb)), // Some(borg),
-    };
-
-    RobotServer::run(&mut borg);
 }
