@@ -7,6 +7,10 @@ authors = ["Michael Johnson <mjohnson459@gmail.com>"]
 tiny_http = "0.6"
 linux-embedded-hal = "0.2"
 robot-traits = "0.1"
+bme280 = "0.1.0"
+
+[dependencies.hcsr04]
+path = "../hcsr04"
 
 [dependencies.picoborgrev]
 path = "../picoborgrev"

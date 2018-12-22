@@ -6,7 +6,8 @@
         {
             "label": "deploy",
             "type": "shell",
-            "command": "./scripts/deploy"
+            "command": "./scripts/deploy",
+            "problemMatcher": []
         },
         {
             "label": "[rpi] cargo build --release",
