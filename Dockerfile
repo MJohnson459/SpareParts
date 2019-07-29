@@ -1,18 +1,6 @@
-FROM ubuntu
+FROM debian:stretch@sha256:fd78f894f65bbdecbd9c533dffe3e6a1a092f5087462325639caa9afb5428f52
 
-RUN apt-get -q update
-RUN apt-get install -y \
-  snapd \
-  snapcraft \
-  build-essential \
-  curl \
-  git
+COPY ./target/armv7-unknown-linux-gnueabihf/release/spare-parts /
+COPY ./scripts /scripts
 
-# RUN snap install lxd && lxd init
-# RUN usermod -a -G lxd $USER && newgrp lxd
-# RUN snap install --classic snapcraft
-
-COPY . /host
-WORKDIR /host
-
-RUN snapcraft build
+CMD ["/spare-parts"]

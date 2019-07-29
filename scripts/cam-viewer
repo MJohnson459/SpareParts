@@ -1,0 +1,7 @@
+#!/bin/bash
+
+IP=kronus459.ddns.net
+PORT=5000
+
+gst-launch-1.0 -v tcpclientsrc host=$IP port=$PORT  ! gdpdepay !  rtph264depay ! avdec_h264 ! videoconvert ! autovideosink sync=false
+

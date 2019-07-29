@@ -1,27 +1,19 @@
 # SpareParts
 
-[![Snap Status](https://build.snapcraft.io/badge/MJohnson459/SpareParts.svg)](https://build.snapcraft.io/user/MJohnson459/SpareParts)
+## Problem
+I have a raspberry pi 3. I have a picoborg-rev motor controller and two DC motors attached. This
+repo is an exercise in getting this developable with as little headache as possible. There are a few
+problems that need to be solved:
+1. dev machine is x86, rpi is armv7.
+2. dev machine has a different OS than rpi (different libc).
 
-This repository contains the source code for a custom robot
-built with a Raspberry Pi 3 (with camera) and a PiBorg Reverse motor
-controller.
+## Plan
+Cross compile with Rust `--target` argument.
+Copy binary to armv7 docker image
+Push to a local docker registry
+Pull image from rpi
 
-The intention is to integrate this robot with ROS and use monocular
-visual odometry to to estimate the position (probably in conjunction
-with the ros [robot_localization] package.
-
-This package will contain multiple components which may be split up
-in the future:
-
-1. A ROS node to convert the `cmd_vel` topic to PiBorg Reverse commands.
-2. A node which estimates position based on `cmd_vel` topic.
-3. A launch file which starts up the nodes
-
-
-This robot will rely on the following packages:
-[viso2_ros]
-
-
-
-[robot_localization]: http://wiki.ros.org/robot_localization
-[viso2_ros]: http://wiki.ros.org/viso2_ros
+## Resources
+https://kmdouglass.github.io/posts/how-i-built-a-cross-compilation-workflow-for-the-raspberry-pi.html
+https://github.com/japaric/rust-cross
+https://stackoverflow.com/questions/47645522/cross-compile-multi-arch-containers/49100890

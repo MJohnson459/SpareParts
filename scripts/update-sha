@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker manifest inspect debian:stretch | jq -r '.manifests[] | select(.platform.architecture == "arm" and .platform.variant == "v7") | .digest'
